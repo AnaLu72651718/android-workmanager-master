@@ -35,7 +35,7 @@ import java.util.Locale
 private const val TAG = "SaveImageToFileWorker"
 class SaveImageToFileWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params) {
 
-    private val Title = "Blurred Image"
+    private val Title = "Imagen borrosa"
     private val dateFormatter = SimpleDateFormat(
             "yyyy.MM.dd 'at' HH:mm:ss z",
             Locale.getDefault()
@@ -44,7 +44,7 @@ class SaveImageToFileWorker(ctx: Context, params: WorkerParameters) : Worker(ctx
     override fun doWork(): Result {
         // Makes a notification when the work starts and slows down the work so that
         // it's easier to see each WorkRequest start, even on emulated devices
-        makeStatusNotification("Saving image", applicationContext)
+        makeStatusNotification("Guardando imagen", applicationContext)
         sleep()
 
         val resolver = applicationContext.contentResolver
@@ -59,7 +59,7 @@ class SaveImageToFileWorker(ctx: Context, params: WorkerParameters) : Worker(ctx
 
                 Result.success(output)
             } else {
-                Log.e(TAG, "Writing to MediaStore failed")
+                Log.e(TAG, "Error al escribir en MediaStore")
                 Result.failure()
             }
         } catch (exception: Exception) {

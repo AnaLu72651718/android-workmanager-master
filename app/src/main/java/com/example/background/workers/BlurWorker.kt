@@ -26,7 +26,7 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.example.background.KEY_IMAGE_URI
 
-private const val TAG = "BlurWorker"
+private const val TAG = "Desenfoque"
 class BlurWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params) {
 
     override fun doWork(): Result {
@@ -34,15 +34,15 @@ class BlurWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params) {
 
         val resourceUri = inputData.getString(KEY_IMAGE_URI)
 
-        makeStatusNotification("Blurring image", appContext)
+        makeStatusNotification("Imagen Borrosa", appContext)
 
         // This is an utility function added to emulate slower work.
         sleep()
 
         return try {
             if (TextUtils.isEmpty(resourceUri)) {
-                Log.e(TAG, "Invalid input uri")
-                throw IllegalArgumentException("Invalid input uri")
+                Log.e(TAG, "URL de entrada no válido")
+                throw IllegalArgumentException("URL de entrada no válido")
             }
 
             val resolver = appContext.contentResolver
@@ -59,7 +59,7 @@ class BlurWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params) {
 
             Result.success(outputData)
         } catch (throwable: Throwable) {
-            Log.e(TAG, "Error applying blur")
+            Log.e(TAG, "Error al aplicar desenfoque")
             throwable.printStackTrace()
             Result.failure()
         }

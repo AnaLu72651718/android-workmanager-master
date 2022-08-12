@@ -22,10 +22,10 @@ package com.example.background
 
 // Name of Notification Channel for verbose notifications of background work
 @JvmField val VERBOSE_NOTIFICATION_CHANNEL_NAME: CharSequence =
-        "Verbose WorkManager Notifications"
+        "Notificaciones detalladas de WorkManager"
 const val VERBOSE_NOTIFICATION_CHANNEL_DESCRIPTION =
-        "Shows notifications whenever work starts"
-@JvmField val NOTIFICATION_TITLE: CharSequence = "WorkRequest Starting"
+        "Muestra notificaciones cada vez que comienza el trabajo"
+@JvmField val NOTIFICATION_TITLE: CharSequence = "Inicio de solicitud de trabajo"
 const val CHANNEL_ID = "VERBOSE_NOTIFICATION"
 const val NOTIFICATION_ID = 1
 

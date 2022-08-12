@@ -50,10 +50,13 @@
             android:orientation="vertical"
             android:id="@+id/radio_blur_group"
             android:checkedButton="@+id/radio_blur_lv_1">
-            <RadioButton android:id="@+id/radio_blur_lv_1"
-                android:layout_width="wrap_content"
+
+            <RadioButton
+                android:id="@+id/radio_blur_lv_1"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/blur_lv_1" />
+
             <RadioButton android:id="@+id/radio_blur_lv_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

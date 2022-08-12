@@ -26,13 +26,13 @@ import java.io.File
 /**
  * Cleans up temporary files generated during blurring process
  */
-private const val TAG = "CleanupWorker"
+private const val TAG = "Limpieza"
 class CleanupWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params) {
 
     override fun doWork(): Result {
         // Makes a notification when the work starts and slows down the work so that
         // it's easier to see each WorkRequest start, even on emulated devices
-        makeStatusNotification("Cleaning up old temporary files", applicationContext)
+        makeStatusNotification("Limpieza de archivos temporales antiguos", applicationContext)
         sleep()
 
         return try {
@@ -44,7 +44,7 @@ class CleanupWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
                         val name = entry.name
                         if (name.isNotEmpty() && name.endsWith(".png")) {
                             val deleted = entry.delete()
-                            Log.i(TAG, "Deleted $name - $deleted")
+                            Log.i(TAG, "Eliminado $name - $deleted")
                         }
                     }
                 }
