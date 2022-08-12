@@ -18,7 +18,7 @@
     <string name="app_name">Lab10</string>
 
     <!-- Titles -->
-    <string name="blur_title">Seleccione la Cantidad de Desenfoque</string>
+    <string name="blur_title">Seleccione la intensidad de desenfoque</string>
 
     <!-- Buttons -->
     <string name="select_image">Seleccionar Imagen</string>
@@ -30,8 +30,8 @@
 
     <!-- Blur levels -->
     <string name="blur_lv_1">Un poco borroso</string>
-    <string name="blur_lv_2">Mas borroso</string>
-    <string name="blur_lv_3">Mucho mas borroso</string>
+    <string name="blur_lv_2">Más borroso</string>
+    <string name="blur_lv_3">Mucho más borroso</string>
     <string name="cancel_work">Cancelar</string>
 
     <!-- Messages -->
