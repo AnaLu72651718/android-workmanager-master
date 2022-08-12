@@ -30,9 +30,8 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import com.example.background.workers.BlurWorker
-import com.example.background.workers.CleanupWorker
-import com.example.background.workers.SaveImageToFileWorker
+import com.example.background.workers.*
+import java.util.*
 
 class BlurViewModel(application: Application) : ViewModel() {
 
@@ -45,6 +44,7 @@ class BlurViewModel(application: Application) : ViewModel() {
         // This transformation makes sure that whenever the current work Id changes the WorkInfo
         // the UI is listening to changes
         imageUri = getImageUri(application.applicationContext)
+
     }
 
     internal fun cancelWork() {
@@ -106,6 +106,83 @@ class BlurViewModel(application: Application) : ViewModel() {
         continuation.enqueue()
     }
 
+    // SEQUENTIAL TASKS
+    internal fun cicleImageAndApplyBlur(blurLevel: Int){
+    // Add WorkRequest to Cleanup temporary images
+        var continuation = workManager
+            .beginWith(
+                OneTimeWorkRequest.from(CleanupWorker::class.java)
+            )
+
+        for (i in 0 until blurLevel) {
+            val blurBuilder = OneTimeWorkRequestBuilder<BlurWorker>()
+
+            if (i == 0) {
+                blurBuilder.setInputData(createInputDataForUri())
+            }
+            continuation = continuation.then(blurBuilder.build())
+        }
+
+        // Add WorkRequest to set name to the image
+        val resizeBuilder = OneTimeWorkRequestBuilder<CircleImageWorker>()
+        continuation = continuation.then(resizeBuilder.build())
+
+
+        // Create charging constraint
+        val constraints = Constraints.Builder()
+            .setRequiresCharging(true)
+            .build()
+
+        // Add WorkRequest to save the image to the filesystem
+        val save = OneTimeWorkRequestBuilder<SaveImageToFileWorker>()
+            .setConstraints(constraints)
+            .addTag(TAG_OUTPUT)
+            .build()
+        continuation = continuation.then(save)
+
+        // Actually start the work
+        continuation.enqueue()
+    }
+
+    // PARALLEL TASKS
+    internal fun cicleImageAndApplyBlurParallel(blurLevel: Int){
+        // Add WorkRequest to Cleanup temporary images
+        var continuation = workManager
+            .beginWith(
+                OneTimeWorkRequest.from(CleanupWorker::class.java)
+            )
+        // Add WorkRequest to crop circle the image
+        val circleBuilder = OneTimeWorkRequestBuilder<CircleImageWorker>()
+        //continuation = continuation.then(circleBuilder.build())
+
+        for (i in 0 until blurLevel) {
+            val blurBuilder = OneTimeWorkRequestBuilder<BlurWorker>()
+
+            if (i == 0) {
+                blurBuilder.setInputData(createInputDataForUri())
+            }
+            circleBuilder.setInputData(createInputDataForUri())
+            continuation = continuation.then(Arrays.asList(blurBuilder.build(), circleBuilder.build()))
+        }
+
+
+
+
+        // Create charging constraint
+        val constraints = Constraints.Builder()
+            .setRequiresCharging(true)
+            .build()
+
+        // Add WorkRequest to save the image to the filesystem
+        val save = OneTimeWorkRequestBuilder<SaveImageToFileWorker>()
+            .setConstraints(constraints)
+            .addTag(TAG_OUTPUT)
+            .build()
+        continuation = continuation.then(save)
+
+        // Actually start the work
+        continuation.enqueue()
+    }
     private fun uriOrNull(uriString: String?): Uri? {
         return if (!uriString.isNullOrEmpty()) {
             Uri.parse(uriString)

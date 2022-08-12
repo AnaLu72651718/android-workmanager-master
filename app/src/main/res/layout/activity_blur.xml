@@ -30,11 +30,11 @@
         <ImageView
             android:id="@+id/image_view"
             android:layout_width="match_parent"
-            android:layout_height="400dp"
+            android:layout_height="300dp"
             android:layout_weight="1"
-            android:src="@drawable/android_cancun"
             android:contentDescription="@string/description_image"
-            android:scaleType="fitCenter" />
+            android:scaleType="fitCenter"
+            android:src="@drawable/android_cancun" />
 
         <TextView
             android:id="@+id/filters_title"
@@ -62,6 +62,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/blur_lv_3" />
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_weight="23" />
         </RadioGroup>
 
         <RadioGroup
@@ -69,6 +74,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <CheckBox
+                    android:id="@+id/checkBox_Parallel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Activar Secuencia/Paralelo: " />
+
+                <Switch
+                    android:id="@+id/switch1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="15dp"
+                    android:clickable="false"
+                    android:text="Trabajar en Paralelo" />
+            </LinearLayout>
 
         </RadioGroup>
 

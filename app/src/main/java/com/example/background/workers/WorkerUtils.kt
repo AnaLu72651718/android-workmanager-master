@@ -21,30 +21,21 @@ package com.example.background.workers
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.graphics.Bitmap
+import android.graphics.*
 import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.renderscript.Allocation
-import androidx.renderscript.Element
-import androidx.renderscript.RenderScript
-import androidx.renderscript.ScriptIntrinsicBlur
-import com.example.background.CHANNEL_ID
-import com.example.background.DELAY_TIME_MILLIS
-import com.example.background.NOTIFICATION_ID
-import com.example.background.NOTIFICATION_TITLE
-import com.example.background.OUTPUT_PATH
-import com.example.background.R
-import com.example.background.VERBOSE_NOTIFICATION_CHANNEL_DESCRIPTION
-import com.example.background.VERBOSE_NOTIFICATION_CHANNEL_NAME
+import androidx.renderscript.*
+import com.example.background.*
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
-import java.util.UUID
+import java.lang.Integer.min
+import java.util.*
 
 /**
  * Create a Notification that is shown as a heads-up notification if possible.
@@ -128,6 +119,55 @@ fun blurBitmap(bitmap: Bitmap, applicationContext: Context): Bitmap {
         outAlloc.copyTo(output)
 
         return output
+    } finally {
+        rsContext.finish()
+    }
+}
+
+/**
+ * Blurs the given Bitmap image
+ * @param bitmap Image to blur
+ * @param applicationContext Application context
+ * @return Resized bitmap image
+ */
+
+@WorkerThread
+fun circleBitmap(bitmap: Bitmap, applicationContext: Context): Bitmap {
+    lateinit var rsContext: RenderScript
+    try {
+
+        // Select whichever of width or height is minimum
+        val squareBitmapWidth = min(bitmap!!.width, bitmap.height)
+        rsContext = RenderScript.create(applicationContext, RenderScript.ContextType.DEBUG)
+
+        // Generate a bitmap with the above value as dimensions
+        val dstBitmap = Bitmap.createBitmap(
+            squareBitmapWidth,
+            squareBitmapWidth,
+            Bitmap.Config.ARGB_8888
+        )
+
+        // Initializing a Canvas with the above generated bitmap
+        val canvas = Canvas(dstBitmap)
+
+        // initializing Paint
+        val paint = Paint()
+        paint.isAntiAlias = true
+
+        // Generate a square (rectangle with all sides same)
+        val rect = Rect(0, 0, squareBitmapWidth, squareBitmapWidth)
+        val rectF = RectF(rect)
+
+        // Operations to draw a circle
+        canvas.drawOval(rectF, paint)
+        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
+        val left = ((squareBitmapWidth - bitmap.width) / 2).toFloat()
+        val top = ((squareBitmapWidth - bitmap.height) / 2).toFloat()
+        canvas.drawBitmap(bitmap, left, top, paint)
+        bitmap.recycle()
+
+        // Return the bitmap
+        return dstBitmap
     } finally {
         rsContext.finish()
     }

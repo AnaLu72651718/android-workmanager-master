@@ -1,29 +1,16 @@
-/*
- * Copyright (C) 2018 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 
 package com.example.background
 
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.work.WorkInfo
 import com.example.background.databinding.ActivityBlurBinding
+
 
 class BlurActivity : AppCompatActivity() {
 
@@ -35,7 +22,28 @@ class BlurActivity : AppCompatActivity() {
         binding = ActivityBlurBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.goButton.setOnClickListener { viewModel.applyBlur(blurLevel) }
+        var checkedBoxEnabled = binding.checkBoxParallel.isChecked
+
+        binding.checkBoxParallel.setOnCheckedChangeListener{ _, isChecked ->
+            checkedBoxEnabled = isChecked
+            binding.switch1.isClickable = isChecked
+        }
+        var checkedParallel = binding.switch1.isChecked
+        binding.switch1.setOnCheckedChangeListener{ _, isChecked ->
+            checkedParallel = isChecked
+        }
+
+        //Boton principal de ejecución
+        binding.goButton.setOnClickListener {
+            if(!checkedBoxEnabled)
+            viewModel.applyBlur(blurLevel)
+            else if (checkedParallel){
+                viewModel.cicleImageAndApplyBlurParallel(blurLevel)
+            }
+            else {
+                viewModel.cicleImageAndApplyBlur(blurLevel)
+            }
+        }
 
         // Setup view output image file button
         binding.seeFileButton.setOnClickListener {
